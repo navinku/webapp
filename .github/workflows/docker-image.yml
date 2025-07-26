@@ -22,9 +22,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Extract short SHA
+        id: vars
+        run: echo "SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/webppt:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/webppt:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/webppt:${{ env.SHORT_SHA }}
